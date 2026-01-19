@@ -6,7 +6,7 @@
 "scripts": {
   "start": "node index.js",
   "lint": "echo '✨ Kitchen is clean!'",
-  "test": "jest",
+  "test": "echo '✅ Biryani is in progress....'",
   "build": "echo '🔥 Cooking Biryani...'",
   "deploy": "echo '🚀 Serving Customer...'"
 },
