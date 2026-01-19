@@ -1,27 +1,34 @@
-name: Improved-workflow
+name: Improved Order Workflow
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkoutcode
-        uses: actions/checkout@v4
-      - name: setup node
-        uses: action/setup-node@v4
-        with:
-            node-version: 22
-            cache: "npm" 
-      - name : print lint
-        run : echo "lint started"
-      - name: run lint check
-        run: npm run lint
-      - name : print run lint check
-        run : echo "lint ended"
-  taste-test:
+  hygiene-check:
+    name: Hygiene Check (Lint)
     runs-on: ubuntu-latest
-    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Lint
+        run: npm run lint
+
+  taste-test:
+    name: Taste Test (Unit Tests)
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -39,8 +46,9 @@ jobs:
         run: npm test
 
   cook:
+    name: Cook (Build)
     runs-on: ubuntu-latest
-    needs: taste-test
+    needs: [hygiene-check, taste-test]
 
     steps:
       - name: Checkout code
@@ -58,6 +66,7 @@ jobs:
         run: npm run build
 
   serve:
+    name: Serve (Deploy)
     runs-on: ubuntu-latest
     needs: cook
 
