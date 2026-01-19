@@ -1,0 +1,77 @@
+name: Improved-workflow
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkoutcode
+        uses: actions/checkout@v4
+      - name: setup node
+        uses: action/setup-node@v4
+        with:
+            node-version: 22
+            cache: "npm" 
+      - name : print lint
+        run : echo "lint started"
+      - name: run lint check
+        run: npm run lint
+      - name : print run lint check
+        run : echo "lint ended"
+  taste-test:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test
+
+  cook:
+    runs-on: ubuntu-latest
+    needs: taste-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Project
+        run: npm run build
+
+  serve:
+    runs-on: ubuntu-latest
+    needs: cook
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy Application
+        run: npm run deploy
